@@ -1,6 +1,5 @@
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.*;
 import java.io.*;
 
 class Server {
@@ -65,8 +64,6 @@ class Server {
         InetAddress hote;
         int port;
 
-
-
         Handler(Socket socket) throws IOException
         {
             this.socket = socket;
@@ -76,41 +73,48 @@ class Server {
             port = socket.getPort();
         }
 
-
-
-
         public void run()
         {
+            String tampon;
+            long compteur = 0;
 
+            try
+            {
+                /* envoi du message d'accueil */
+                out.println("Bonjour " + hote + "! (vous utilisez le port " + port + ")");
 
-            while (true) {
-                try {
-                    String line = in.readLine();
-                    switch (line){
-                        case "LIST":
-                            System.out.println("WIP : work in progress...");
-                            break;
-                        case "GET":
-                            System.out.println("WIP : work in progress...");
-                            break;
-                        case "CREATE":
-                            System.out.println("WIP : work in progress...");
-                            break;
-                        case "WRITE":
-                            System.out.println("WIP : work in progress...");
-                            break;
-                        case "DELETE":
-                            System.out.println("WIP : work in progress...");
-                            break;
-                        default:
-                            System.out.println("ERROR : unknown request");
+                do
+                {
+                    /* Faire echo et logguer */
+                    tampon = in.readLine();
+                    if (tampon != null)
+                    {
+                        compteur++;
+                        /* log */
+                        System.err.println("[" + hote + ":" + port + "]: " + compteur + ":" + tampon);
+                        /* echo vers le client */
+                        out.println("> " + tampon);
+                    } else
+                    {
+                        break;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } while (true);
+
+                /* le correspondant a quitté */
+                if(!socket.isClosed())
+                {
+                    in.close();
+                    out.println("Au revoir...");
+                    out.close();
+                    socket.close();
+
+                    System.err.println("[" + hote + ":" + port + "]: Terminé...");
                 }
+            } catch (Exception e)
 
+            {
+                e.printStackTrace();
             }
-
         }
     }
 }
