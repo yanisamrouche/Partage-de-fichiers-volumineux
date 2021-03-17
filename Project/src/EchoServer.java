@@ -31,7 +31,9 @@ public class EchoServer {
         BufferedReader in;
         InetAddress hote;
         int port;
-        String[] requetes = {"LIST","GET","CREATE","WRITE","DELETE"};
+
+
+
 
 
         Handler(Socket socket) throws IOException
@@ -46,16 +48,10 @@ public class EchoServer {
         @Override
         public void run() {
 
-            for(String req : requetes) {
-                try {
-                    if (in.readLine().equals(req))
-                        System.out.println("WIP: work in progress...");
-                    else
-                        System.out.println("ERROR : unknown request");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+           System.out.println("WIP : work in progress");
+
+
+
         }
     }
 
