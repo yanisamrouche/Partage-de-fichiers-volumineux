@@ -71,27 +71,29 @@ class Server {
         }
 
         public void run() {
-            requetes.add("LIST");
-            requetes.add("GET");
-            requetes.add("CREATE");
-            requetes.add("WRITE");
-            requetes.add("DELETE");
-            while (true) {
-                try {
-
-                    if (requetes.contains(in.readLine())) {
+           while (true){
+            try {
+                String line = in.readLine();
+                if ((line.equals("LIST"))) {
                         System.out.println("WIP: work in progress...");
-
-                    } else {
+                    }
+                    else if ((line.equals("GET"))) {
+                        System.out.println("WIP: work in progress...");}
+                    else if ((line.equals("CREATE"))) {
+                        System.out.println("WIP: work in progress...");}
+                    else if ((line.equals("WRITE"))) {
+                        System.out.println("WIP: work in progress...");}
+                    else if ((line.equals("DELETE"))) {
+                        System.out.println("WIP: work in progress...");}
+                    else {
                         System.out.println("ERROR : unknown request");
-
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-    }
-}
+    }}
+
 
 
