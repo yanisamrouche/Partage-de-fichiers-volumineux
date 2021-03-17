@@ -1,4 +1,6 @@
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 import java.io.*;
 
@@ -10,21 +12,18 @@ class Server {
         Socket csocket;
 
         System.out.println("Lancement du serveur sur le port " + port);
-        try
-        {
+        try {
             ssocket = new ServerSocket(port);
             ssocket.setReuseAddress(true); /* rend le port réutilisable rapidement */
-            while (true)
-            {
+            while (true) {
                 //(new Handler(ssocket.accept())).run();
                 csocket = ssocket.accept();
                 Handler ch = new Handler(csocket);
                 Thread thread = new Thread(ch);
                 thread.start();
             }
-        } catch (IOException ex)
-        {
-            System.out.println("Arrêt anormal du serveur."+ ex);
+        } catch (IOException ex) {
+            System.out.println("Arrêt anormal du serveur." + ex);
             return;
         }
     }
@@ -34,18 +33,14 @@ class Server {
         Server serveur;
 
         /* Traitement des arguments */
-        if (argc == 1)
-        {
-            try
-            {
+        if (argc == 1) {
+            try {
                 serveur = new Server();
                 serveur.demarrer(Integer.parseInt(args[0]));
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else
-        {
+        } else {
             System.out.println("Usage: java Server port");
         }
         return;
@@ -63,59 +58,40 @@ class Server {
         BufferedReader in;
         InetAddress hote;
         int port;
+        List<String> requetes = new ArrayList<>();
 
-        Handler(Socket socket) throws IOException
-        {
+
+        Handler(Socket socket) throws IOException {
             this.socket = socket;
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             hote = socket.getInetAddress();
             port = socket.getPort();
+
         }
 
-        public void run()
-        {
-            String tampon;
-            long compteur = 0;
+        public void run() {
+            requetes.add("LIST");
+            requetes.add("GET");
+            requetes.add("CREATE");
+            requetes.add("WRITE");
+            requetes.add("DELETE");
+            while (true) {
+                try {
 
-            try
-            {
-                /* envoi du message d'accueil */
-                out.println("Bonjour " + hote + "! (vous utilisez le port " + port + ")");
+                    if (requetes.contains(in.readLine())) {
+                        System.out.println("WIP: work in progress...");
 
-                do
-                {
-                    /* Faire echo et logguer */
-                    tampon = in.readLine();
-                    if (tampon != null)
-                    {
-                        compteur++;
-                        /* log */
-                        System.err.println("[" + hote + ":" + port + "]: " + compteur + ":" + tampon);
-                        /* echo vers le client */
-                        out.println("> " + tampon);
-                    } else
-                    {
-                        break;
+                    } else {
+                        System.out.println("ERROR : unknown request");
+
                     }
-                } while (true);
-
-                /* le correspondant a quitté */
-                if(!socket.isClosed())
-                {
-                    in.close();
-                    out.println("Au revoir...");
-                    out.close();
-                    socket.close();
-
-                    System.err.println("[" + hote + ":" + port + "]: Terminé...");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e)
-
-            {
-                e.printStackTrace();
             }
         }
     }
 }
+
 

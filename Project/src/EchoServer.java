@@ -24,18 +24,16 @@ public class EchoServer {
         }
     }
 
-    static class Handler implements Runnable{
+    static class Handler implements Runnable {
 
         Socket socket;
         PrintWriter out;
         BufferedReader in;
         InetAddress hote;
         int port;
-        String[] requetes = {"LIST","GET","CREATE","WRITE","DELETE"};
 
 
-        Handler(Socket socket) throws IOException
-        {
+        Handler(Socket socket) throws IOException {
             this.socket = socket;
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -45,23 +43,13 @@ public class EchoServer {
 
         @Override
         public void run() {
+            System.out.println("WIP : WORK IN PROGRESS.");
 
-            for(String req : requetes) {
-                try {
-                    if (in.readLine().equals(req))
-                        System.out.println("WIP: work in progress...");
-                    else
-                        System.out.println("ERROR : unknown request");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+
         }
+
+
     }
-
-
-
-
 
 
 }
