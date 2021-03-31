@@ -59,6 +59,7 @@ class Server {
     class Handler implements Runnable {
 
         Socket socket;
+        ServerFile serverFile;
         PrintWriter out;
         BufferedReader in;
         InetAddress hote;
@@ -71,42 +72,82 @@ class Server {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             hote = socket.getInetAddress();
             port = socket.getPort();
+            this.serverFile = new ServerFile();
         }
 
-        public void run()
-        {
+        public void run() {
+            String tampon;
+            long compteur = 0;
 
-            while (true) {
+            try {
+                /* envoi du message d'accueil */
+                out.println("WIP");
 
+                do {
+                    /* Faire echo et logguer */
 
-                try {
-                    String line = in.readLine();
-                    switch (line) {
-                        case "LIST":
-                            System.out.println("WIP : work in process...");
-                            break;
-                        case "GET":
-                            System.out.println("WIP : work in process...");
-                            break;
-                        case "CREATE":
-                            System.out.println("WIP : work in process...");
-                            break;
-                        case "WRITE":
-                            System.out.println("WIP : work in process...");
-                            break;
-                        case "DELETE":
-                            System.out.println("WIP : work in process...");
-                            break;
-                        default:
-                            System.out.println("ERROR : unknown request");
+                    tampon = in.readLine();
+
+                    if (tampon != null) {
+
+                        String[] commande = tampon.split(" ");
+                        commande[0] = commande[0].toUpperCase();
+
+                        switch(commande[0]){
+                            case "LIST":
+                                out.println("WIP");
+                                final File folder = new File("./files");
+                                String listOfFiles = this.serverFile.listFiles(folder);
+                                out.println(listOfFiles);
+                                break;
+
+                            case "GET":
+                                out.println("WIP");
+                                final File f = new File(commande[1]);
+                                this.serverFile.readFile(f,socket);
+                                break;
+
+                            case "WRITE":
+                                out.println("WIP");
+                                final File file = new File(commande[1]);
+                                FileHandle fileHandle = new FileHandle(file);
+                                this.serverFile.changeFile(fileHandle);
+                                break;
+
+                            case "DELETE":
+                                out.println("WIP");
+                                final File file1 = new File(commande[1]);
+                                FileHandle fileHandle1 = new FileHandle(file1);
+                                this.serverFile.removeFile(fileHandle1);
+
+                                break;
+
+                            case "CREATE":
+                                out.println("WIP");
+                                final File file2 = new File(commande[1]);
+                                this.serverFile.createFile(file2);
+                                break;
+                            default:
+                                out.println("ERROR : unknown request");
+                        }
+                    } else {
+                        break;
                     }
+                } while (true);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                /* le correspondant a quitté */
+                in.close();
+                out.println("Au revoir...");
+                out.close();
+                socket.close();
+
+                System.err.println("[" + hote + ":" + port + "]: Terminé...");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
         }
     }
 }
+
+
 
