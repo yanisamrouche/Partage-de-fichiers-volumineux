@@ -1,6 +1,6 @@
 import java.net.*;
-import java.util.concurrent.*;
 import java.io.*;
+import java.util.Scanner;
 
 class Server {
 
@@ -59,8 +59,10 @@ class Server {
     class Handler implements Runnable {
 
         Socket socket;
+        ServerFile serverFile;
         PrintWriter out;
         BufferedReader in;
+        Scanner scanner;
         InetAddress hote;
         int port;
 
@@ -69,53 +71,87 @@ class Server {
             this.socket = socket;
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            scanner = new Scanner(socket.getInputStream());
             hote = socket.getInetAddress();
             port = socket.getPort();
+            this.serverFile = new ServerFile();
         }
 
-        public void run()
-        {
+        public void run() {
             String tampon;
             long compteur = 0;
 
-            try
-            {
-                /* envoi du message d'accueil */
-                out.println("Bonjour " + hote + "! (vous utilisez le port " + port + ")");
+            try {
 
-                do
-                {
-                    /* Faire echo et logguer */
-                    tampon = in.readLine();
-                    if (tampon != null)
-                    {
-                        compteur++;
-                        /* log */
-                        System.err.println("[" + hote + ":" + port + "]: " + compteur + ":" + tampon);
-                        /* echo vers le client */
-                        out.println("> " + tampon);
-                    } else
-                    {
-                        break;
+                tampon = scanner.nextLine();
+                    if (tampon != null) {
+
+                        String[] commande = tampon.split(" ");
+                        commande[0] = commande[0].toUpperCase();
+
+                        switch(commande[0]){
+                            case "LIST":
+
+                                File folder = new File("./ServerFiles");
+                                String listOfFiles = this.serverFile.listFiles(folder);
+                                out.println(listOfFiles);
+                                socket.close();
+                                out.close();
+                                scanner.close();
+                                break;
+
+                            case "GET":
+
+                                File f = new File("./ServerFiles/"+commande[1]);
+                                this.serverFile.readFile(f,socket);
+                                socket.close();
+                                out.close();
+                                scanner.close();
+                                break;
+
+                            case "WRITE":
+                                File f1 = new File("./ServerFiles/"+commande[1]);
+                                FileHandle f2 = new FileHandle(f1);
+                                this.serverFile.writeFile(f2, in);
+                                socket.close();
+                                out.close();
+                                in.close();
+                                scanner.close();
+                                break;
+
+                            case "DELETE":
+
+                                File file1 = new File("./ServerFiles/"+commande[1]);
+                                FileHandle fileHandle1 = new FileHandle(file1);
+                                this.serverFile.removeFile(fileHandle1);
+                                socket.close();
+                                out.close();
+                                scanner.close();
+
+                                break;
+
+                            case "CREATE":
+
+                                File file2 = new File("./ServerFiles/"+commande[1]);
+                                this.serverFile.createFile(file2);
+                                socket.close();
+                                out.close();
+                                scanner.close();
+                                break;
+                            default:
+                                out.println("ERROR : unknown request");
+                        }
                     }
-                } while (true);
 
                 /* le correspondant a quitté */
-                if(!socket.isClosed())
-                {
-                    in.close();
-                    out.println("Au revoir...");
-                    out.close();
-                    socket.close();
+                out.close();
+                scanner.close();
+                socket.close();
 
-                    System.err.println("[" + hote + ":" + port + "]: Terminé...");
-                }
-            } catch (Exception e)
-
-            {
+                System.err.println("[" + hote + ":" + port + "]: Terminé...");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 }
-
