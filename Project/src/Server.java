@@ -156,17 +156,21 @@ class Server {
 
                             case "GET":
 
-                                File f = new File(pathname+commande[1]);
-                                this.serverFile.readFile(f,socket);
+                               // File f = new File(pathname+commande[1]);
+                                //this.serverFile.readFile(f,socket);
+                                String f = commande[1];
+                                this.serverFile.getRequest(f,out);
                                 socket.close();
                                 out.close();
                                 scanner.close();
                                 break;
 
                             case "WRITE":
-                                File f1 = new File(pathname+commande[1]);
-                                FileHandle f2 = new FileHandle(f1);
-                                this.serverFile.writeFile(f2, in);
+                               // File f1 = new File(pathname+commande[1]);
+                                //FileHandle f2 = new FileHandle(f1);
+                                //this.serverFile.writeFile(f2, in);
+                                String filen = commande[1];
+                                this.serverFile.writeRequest(filen, scanner, out);
                                 socket.close();
                                 out.close();
                                 in.close();

@@ -116,25 +116,62 @@ public class ServerFile {
 
         File folder = new File(this.current.getPathname());
 
-        String str = "";
-        //fichiers locaux
-        for (File fileEntry : folder.listFiles()) {
-            if (fileEntry.isDirectory()) {
-                str += "/" + fileEntry.getName() + " ";
-                printWriter.println(str);
-            } else {
-                str += fileEntry.getName() + " ";
-                printWriter.println(str);
+        if(folder.listFiles().length==0 && this.servers.size() == 0){
+            printWriter.println("Aucun fichier disponnible.");
+            printWriter.flush();
+            return;
+        }
+
+        for (File file : folder.listFiles()){
+            if (file.isDirectory()){
+                printWriter.println("/"+file.getName());
+            }else{
+                printWriter.println(file.getName());
             }
         }
 
-        //fichiers externes
-        for(String filename : this.servers.keySet()){
-            str += filename;
-            printWriter.println(str);
+        for (String filename : this.servers.keySet()){
+            printWriter.println(filename);
         }
 
         printWriter.flush();
 
+    }
+
+    public void getRequest(String filename, PrintWriter writer) {
+        // On appel la fonction get du filehandler
+
+        if(this.map.get(filename) != null) {
+            writer.println("OK");
+            writer.flush();
+            this.map.get(filename).readFile(writer);
+
+        } else if(this.servers.get(filename) != null) {
+            writer.println("REDIRECTION " + this.servers.get(filename).getLocalhost() + ":" + this.servers.get(filename).getPort());
+            writer.flush();
+        } else {
+            writer.println("Le fichier est introuvable.");
+            writer.flush();
+        }
+    }
+
+    public void writeRequest(String filename, Scanner sc, PrintWriter writer){
+        if(this.map.get(filename) != null) {
+            writer.println("OK");
+            writer.flush();
+            if(this.map.get(filename).replaceFile(sc) == FileHandle.OperationStatus.OK) {
+                writer.println( filename +" a bien été modifié");
+                writer.flush();
+            } else {
+                writer.println( filename +" n'a pas pu être modifié");
+                writer.flush();
+            }
+        } else if(this.servers.get(filename) != null) {
+            writer.println("REDIRECTION " + this.servers.get(filename).getLocalhost() + ":" + this.servers.get(filename).getPort());
+            writer.flush();
+        } else {
+            writer.println( filename +" n'a pas pu être modifié");
+            writer.flush();
+        }
     }
 }
