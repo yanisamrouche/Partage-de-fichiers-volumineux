@@ -20,17 +20,11 @@ public class Client {
         boolean fini = false;
 
         if (args.length != 3) {
-            System.out.println("Usage: java EchoClient @server @port");
+            System.out.println("Usage: java Client ip port");
             System.exit(1);
         }
         ip = args[0];
         port = Integer.parseInt(args[1]);
-
-        if (port > 65535) {
-            System.err.println("Port hors limite");
-            System.exit(3);
-        }
-
         folderURL = args[2];
 
         try {
@@ -49,14 +43,20 @@ public class Client {
                     return;
                 }
 
-                out.println("LIST");
-                out.flush();
-
+                System.out.println("Veuillez entrer la requete pour récupérer les fichiers du serveur : ");
+                String listRequest = stdin.readLine();
+                if (listRequest.equals("LIST")){
+                    out.println("LIST");
+                    out.flush();
+                }
                 files.clear();
                 while(scanner.hasNextLine()) {
                     files.add(scanner.nextLine());
                 }
-
+                System.out.println(" la liste des fichiers du serveur : ");
+                for(String f : files) {
+                    System.out.println(f);
+                }
                 socket.close();
                 out.close();
                 scanner.close();
