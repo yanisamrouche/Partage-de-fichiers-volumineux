@@ -4,8 +4,15 @@ import java.util.Scanner;
 
 class Server {
 
+    String pathname;
+    int port;
+
+    public Server(int port, String pathname){
+        this.pathname = pathname;
+        this.port = port;
+    }
     /* Démarrage et délégation des connexions entrantes */
-    public void demarrer(int port) {
+    public void demarrer(int port, String pathname) {
         ServerSocket ssocket; // socket d'écoute utilisée par le serveur
         Socket csocket;
 
@@ -34,19 +41,19 @@ class Server {
         Server serveur;
 
         /* Traitement des arguments */
-        if (argc == 1)
+        if (argc > 1)
         {
             try
             {
-                serveur = new Server();
-                serveur.demarrer(Integer.parseInt(args[0]));
+                serveur = new Server(Integer.parseInt(args[0]),args[1]);
+                serveur.demarrer(Integer.parseInt(args[0]), args[1]);
             } catch (Exception e)
             {
                 e.printStackTrace();
             }
         } else
         {
-            System.out.println("Usage: java Server port");
+            System.out.println("Usage: java Server port DirectoryName");
         }
         return;
     }
@@ -92,7 +99,7 @@ class Server {
                         switch(commande[0]){
                             case "LIST":
 
-                                File folder = new File("./ServerFiles");
+                                File folder = new File(pathname);
                                 String listOfFiles = this.serverFile.listFiles(folder);
                                 out.println(listOfFiles);
                                 socket.close();
@@ -102,7 +109,7 @@ class Server {
 
                             case "GET":
 
-                                File f = new File("./ServerFiles/"+commande[1]);
+                                File f = new File(pathname+commande[1]);
                                 this.serverFile.readFile(f,socket);
                                 socket.close();
                                 out.close();
@@ -110,7 +117,7 @@ class Server {
                                 break;
 
                             case "WRITE":
-                                File f1 = new File("./ServerFiles/"+commande[1]);
+                                File f1 = new File(pathname+commande[1]);
                                 FileHandle f2 = new FileHandle(f1);
                                 this.serverFile.writeFile(f2, in);
                                 socket.close();
@@ -121,7 +128,7 @@ class Server {
 
                             case "DELETE":
 
-                                File file1 = new File("./ServerFiles/"+commande[1]);
+                                File file1 = new File(pathname+commande[1]);
                                 FileHandle fileHandle1 = new FileHandle(file1);
                                 this.serverFile.removeFile(fileHandle1);
                                 socket.close();
@@ -132,7 +139,7 @@ class Server {
 
                             case "CREATE":
 
-                                File file2 = new File("./ServerFiles/"+commande[1]);
+                                File file2 = new File(pathname+commande[1]);
                                 this.serverFile.createFile(file2);
                                 socket.close();
                                 out.close();
