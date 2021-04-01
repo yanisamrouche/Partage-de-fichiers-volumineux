@@ -10,8 +10,8 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args){
-        File config = new File("servers.txt");
-        List<Server> servers = new ArrayList<>();
+        File config = new File("./servers.txt");
+        ArrayList<Server> servers = new ArrayList<>();
 
         String dirName = "ServerFiles";
         int dirNbr = 1;
@@ -40,7 +40,7 @@ public class App {
             }
             s.setServers(serverArrayList);
             System.out.println("lancement du serveur:  " + s.getLocalhost() + ":" + s.getPort() + "[ " + s.getPathname() +" ]");
-            s.demarrer(s.getPort(), s.getPathname());
+            //s.demarrer(s.getPort(), s.getPathname());
         }
 
         for (Server serverPrincipale : servers){

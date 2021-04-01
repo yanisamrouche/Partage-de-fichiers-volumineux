@@ -7,10 +7,10 @@ import java.util.Scanner;
 class Server {
 
     String pathname;
-     static int port;
+     int port;
      static  String localhost;
      static ServerFile serverFile;
-     static List<Server> servers;
+      List<Server> servers;
 
 
     public Server(String localhost,int port, String pathname){
@@ -76,7 +76,7 @@ class Server {
     }
 
     public void setServers(ArrayList<Server> s){
-        servers = s;
+        this.servers = s;
     }
 
     public static void main(String[] args) {
@@ -183,12 +183,12 @@ class Server {
                                     socket.close();
                                     out.close();
                                     scanner.close();
-                                    for(Server server : Server.servers){
+                                    for(Server server : getServers()){
                                         try {
                                             Socket socket = new Socket(server.getLocalhost(), server.getPort());
                                             out = new PrintWriter(socket.getOutputStream(), true);
                                             scanner = new Scanner(socket.getInputStream());
-                                            out.println("SERVER_DELETE "+filename+" "+Server.localhost + ":" + Server.port);
+                                            out.println("SERVER_DELETE "+filename+" "+Server.localhost + ":" + getPort());
                                             out.flush();
                                             scanner.nextLine();
                                             out.close();
@@ -225,12 +225,12 @@ class Server {
                                     out.close();
                                     scanner.close();
 
-                                    for(Server server : Server.servers){
+                                    for(Server server : getServers()){
                                         try {
                                             Socket socket = new Socket(server.getLocalhost(), server.getPort());
                                             out = new PrintWriter(socket.getOutputStream(), true);
                                             scanner = new Scanner(socket.getInputStream());
-                                            out.println("SERVER_CREATE "+ fn+" "+Server.localhost+":"+Server.port);
+                                            out.println("SERVER_CREATE "+ fn+" "+Server.localhost+":"+getPort());
                                             out.flush();
                                             scanner.nextLine();
                                             out.close();

@@ -9,7 +9,6 @@ public class Client {
         Socket socket;
         String ip;
         int port;
-        File folder;
         String folderURL;
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         PrintWriter out;
@@ -20,7 +19,7 @@ public class Client {
         boolean fini = false;
 
         if (args.length != 3) {
-            System.out.println("Usage: java Client ip port");
+            System.out.println("Usage: java Client ip port DirName");
             System.exit(1);
         }
         ip = args[0];
@@ -695,7 +694,7 @@ public class Client {
 
             System.err.println("Fin de la session.");
         } catch (IOException e) {
-            System.err.println("Erreur E/S socket");
+            System.err.println("Erreur");
             e.printStackTrace();
             System.exit(8);
         }
