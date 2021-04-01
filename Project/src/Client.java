@@ -43,20 +43,26 @@ public class Client {
                     return;
                 }
 
-                System.out.println("Veuillez entrer la requete pour récupérer les fichiers du serveur : ");
+                /* requete LIST au clavier
                 String listRequest = stdin.readLine();
                 if (listRequest.equals("LIST")){
                     out.println("LIST");
                     out.flush();
                 }
+
+                 */
+                out.println("LIST");
+                out.flush();
                 files.clear();
                 while(scanner.hasNextLine()) {
                     files.add(scanner.nextLine());
                 }
                 System.out.println(" la liste des fichiers du serveur : ");
+                System.out.println("-----------------------------------------");
                 for(String f : files) {
-                    System.out.println(f);
+                    System.out.println("< "+f+" >"+"\n");
                 }
+                System.out.println("-----------------------------------------");
                 socket.close();
                 out.close();
                 scanner.close();
@@ -67,40 +73,44 @@ public class Client {
                 boolean wrongFileName = false;
                 boolean wrongCommand = false;
 
+                System.out.println("");
 
-                do {
-                    System.out.println("\n1- Selectionner un fichier");
-                    System.out.println("2- Upload un fichier");
-                    System.out.println("3- Créer un nouveau fichier");
-                    System.out.println("4- Lister les fichiers\n");
-                    System.out.println("Que souhaitez vous faire");
+
+                while(wrongCommand); {
+                    System.out.println("Vos Choix : ");
+                    System.out.println("\nChoix n° 01 -> Selectionner un fichier");
+                    System.out.println("-----------------------------------------");
+                    System.out.println("Choix n° 02 -> Upload un fichier");
+                    System.out.println("-----------------------------------------");
+                    System.out.println("Choix n° 03 -> Créer un nouveau fichier");
+                    System.out.println("-----------------------------------------");
+                    System.out.println("Choix n° 04 -> Lister les fichiers\n");
+                    System.out.println("-----------------------------------------");
+                    System.out.println("Tapez votre choix : ");
+                    System.out.println("-----------------------------------------");
                     System.out.print(">");
                     int choice = Integer.parseInt(stdin.readLine());
 
 
                     if(choice == 1) {
 
-                        System.out.println("\t---Fichiers disponibles---\n");
+                        System.out.println("Veuillez choisir votre fichier\n");
+                        System.out.println("-----------------------------------------");
+
                         for(String f : files) {
                             System.out.println(f);
                         }
+                        System.out.println("-----------------------------------------");
+
 
                         System.out.println("\n\nSelectionnez un fichier:");
                         System.out.print(">");
                         filename = stdin.readLine();
-
-                        if(filename == null || filename.contains("../")) {
-                            wrongFileName = true;
-                            System.out.println("\nVeuillez saisir un nom de fichier valide!");
-                        } else {
-                            wrongFileName = false;
-                        }
-
-
-                        System.out.println("\n1- Télécharger le fichier");
-                        System.out.println("2- Modifier le contenu d'un fichier");
-                        System.out.println("3- Supprimer le fichier");
-                        System.out.println("\nQue souhaitez vous faire ?");
+                        System.out.println("Vous avez selectionné le fichier < "+filename+" >");
+                        System.out.println("\n1- Télécharger le fichier < "+filename+" >");
+                        System.out.println("2- Modifier le contenu d'un fichier < "+filename+" >");
+                        System.out.println("3- Supprimer le fichier < "+filename+" >");
+                        System.out.println("Tapez votre choix : ");
                         System.out.print(">");
 
                         choice = Integer.parseInt(stdin.readLine());
@@ -134,7 +144,7 @@ public class Client {
                             wrongCommand= true;
                         }
                     }
-                } while(wrongCommand);
+                }
 
 
                 switch(request) {
@@ -590,6 +600,15 @@ public class Client {
                             out.println("WRITE " + filename);
                             out.flush();
 
+                            // a modifié plustard
+                            String l = "";
+
+                            while((l = stdin.readLine()) != null) {
+                                out.println(l);
+                                out.flush();
+                            }
+
+                            /////////////////////
 
                             // On lit la réponse du serveur
                             response = scanner.nextLine();
